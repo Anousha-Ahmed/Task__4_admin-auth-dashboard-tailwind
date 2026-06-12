@@ -112,6 +112,7 @@
     
     // Avatar
     const avatar = document.getElementById("avatar");
+    const menu = document.getElementById("menu");
     
     avatar.addEventListener("click",(e)=>{
         menu.classList.toggle("hidden");
@@ -127,7 +128,7 @@
 
     const headings = ["ID", "Full Name", "Email", "Phone"];
     const tablehead = document.getElementById("tablehead");
-    headings.forEach((headings) => {
+    headings.forEach((heading) => {
         tablehead.innerHTML += `
         <th class="text-left px-5 py-3">
             ${heading}
