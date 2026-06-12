@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+
+    <div class="w-72 bg-gray-900 text-white">
+
+        <div class="p-6 border-b border-gray-700">
+
+            <h2 class="text-2xl font-bold">
+                Admin Panel
+            </h2>
+
+            <p class="text-sm text-gray-400 mt-1">
+                Management System
+            </p>
+
+        </div>
+
+        <div class="p-5">
+
+            <div class="bg-blue-600 px-4 py-3 rounded-xl flex items-center gap-3">
+                <span class="text-lg"></span>
+                <span class="font-medium">
+                    Users
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="flex-1">
+        <div class="bg-white shadow px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">
+                    Dashboard
+                </h1>
+                <p class="text-gray-500 text-sm">
+                    Welcome,
+                    <span id="userName" class="font-semibold text-blue-600"></span>
+                </p>
+            </div>
+
+            <div class="relative">
+                <img
+                src="../assests/avatar.png" id="avatar" class="w-11 h-11 rounded-full cursor-pointer border-2 border-blue-500 object-cover">
+                <div id="menu" class="hidden absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-40 overflow-hidden">
+                     <button id="logoutBtn" class="w-full text-left px-4 py-3 text-red-600 hover:bg-gray-100">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow">
+                    <h3 class="text-gray-500">Total Users</h3>
+                    <h1 id="userCount" class="text-4xl font-bold text-blue-600 mt-2">0</h1>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow">
+                    <h3 class="text-gray-500">
+                        Logged In Admin
+                    </h3>
+                    <h1 class="text-4xl font-bold text-blue-600 mt-2">
+                        1
+                    </h1>
+                </div>
+
+            </div>
+
+
+            <div class="bg-white rounded-2xl shadow overflow-hidden">
+                <div class="p-5 border-b">
+                    <h2 class="text-xl font-bold text-gray-800">
+                        Users List
+                    </h2>
+                    <p class="text-gray-500 text-sm">
+                        Data fetched from FakeStore API
+                    </p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-blue-600 text-white">
+                            <tr>
+                                <th class="text-left px-5 py-3">ID</th>
+                                <th class="text-left px-5 py-3">Full Name</th>
+                                <th class="text-left px-5 py-3">Email</th>
+                                <th class="text-left px-5 py-3">Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    
+    if(!currentUser || !currentUser.isLoggedIn){
+        window.location.href = "login.html";
+    }
+    
+    // Show username
+    document.getElementById("userName").innerText = currentUser.firstName;
+    
+    // Avatar menu
+    const avatar = document.getElementById("avatar");
+    
+    avatar.addEventListener("click",(e)=>{
+        menu.classList.toggle("hidden");
+    });
+    
+    // Logout
+    document.getElementById("logoutBtn")
+    .addEventListener("click",()=>{
+        localStorage.clear();
+        window.location.href = "login.html";
+    
+    });
+    
+    // Fetch users
+    fetch("https://fakestoreapi.com/users")
+    .then(res => res.json())
+    .then(users => {
+    
+        document.getElementById("userCount").innerText =
+        users.length;
+    
+        const tableBody =
+        document.getElementById("tableBody");
+    
+        users.forEach(user => {
+    
+            const row =
+            document.createElement("tr");
+    
+            row.className =
+            "border-b hover:bg-blue-50";
+    
+            row.innerHTML = `
+            <td class="px-5 py-3">${user.id}</td>
+            <td class="px-5 py-3">
+                ${user.name.firstname}
+                ${user.name.lastname}
+            </td>
+            <td class="px-5 py-3">${user.email}</td>
+            <td class="px-5 py-3">${user.phone}</td>
+            `;
+    
+            tableBody.appendChild(row);
+    
+        });
+    
+    })
+    .catch(()=>{
+    
+        document.getElementById("tableBody").innerHTML = `
+        <tr>
+            <td colspan="4"
+            class="text-center text-red-500 py-8">
+            Failed to load users
+            </td>
+        </tr>
+        `;
+    
+    });
+    
+    </script>
+
+</body>
+</html>
