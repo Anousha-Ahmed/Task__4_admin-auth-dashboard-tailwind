@@ -24,13 +24,13 @@
 
     <form id="signupForm">
 
-        <input type="text" id="firstName" placeholder="First Name" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
-        <input type="text" id="lastName" placeholder="Last Name" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
-        <input type="email" id="email" placeholder="Email Address" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
-        <input type="password" id="password" placeholder="Password" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
-        <input type="password" id="confirmPassword" placeholder="Confirm Password" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="text" id="firstName" name="firstName" placeholder="First Name" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="text" id="lastName"  name="lastName" placeholder="Last Name" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="email" id="email" name="email" placeholder="Email Address" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="password" name="password" id="password" placeholder="Password" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
 
-        <select id="role" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <select id="role" name="role" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
             <option value="admin">Admin</option>
         </select>
 
@@ -53,13 +53,8 @@
     const form = document.getElementById("signupForm");
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-
-        const firstName = document.getElementById("firstName").value.trim();
-        const lastName = document.getElementById("lastName").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
-        const role = document.getElementById("role").value;
+        const formData = new FormData(e.target);
+        const signUpData = Object.fromEntries(formData);
 
         const error = document.getElementById("error");
         error.innerText = "";
@@ -68,44 +63,37 @@
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
         if (
-            !firstName ||
-            !lastName ||
-            !email ||
-            !password ||
-            !confirmPassword
+            !signUpData.firstName ||
+            !signUpData.lastName ||
+            !signUpData.email ||
+            !signUpData.password ||
+            !signUpData.confirmPassword
         ) {
             error.innerText = "All fields are required";
             return;
         }
 
-        if (!emailRegex.test(email)) {
+        if (!emailRegex.test(signUpData.email)) {
             error.innerText = "Enter valid email";
             return;
         }
 
-        if (!passwordRegex.test(password)) {
+        if (!passwordRegex.test(signUpData.password)) {
             error.innerText =
             "Password must contain minimum 8 characters and 1 number";
             return;
         }
 
-        if (password !== confirmPassword) {
+        if (signUpData.password !== signUpData.confirmPassword) {
             error.innerText = "Passwords do not match";
             return;
         }
+        
+        delete signUpData.confirmPassword;
+        signUpData.isLoggedIn = false;
 
-        const user = {
-            firstName,
-            lastName,
-            email,
-            password,
-            role,
-            isLoggedIn: false
-        };
-
-        localStorage.setItem("user",JSON.stringify(user)
+        localStorage.setItem("user",JSON.stringify(signUpData)
         );
-
         window.location.href = "login.html";
 
     });

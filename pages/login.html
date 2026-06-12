@@ -23,8 +23,8 @@
     </div>
 
     <form id="loginForm">
-        <input type="email" id="email" placeholder="Email Address" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
-        <input type="password" id="password" placeholder="Password" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="email" name="email" id="email" placeholder="Email Address" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
+        <input type="password" name="password" id="password" placeholder="Password" class="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500">
         <p id="error" class="text-red-500 text-sm mb-4 font-medium"></p>
 
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition duration-300">
@@ -44,16 +44,16 @@
 
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+        const formData = new FormData(e.target);
+        const logindata = Object.fromEntries(formData);
         const error = document.getElementById("error");
 
         error.innerText = "";
 
-        if (!email || !password) {
+        if (!logindata.email || !logindata.password) {
             error.innerText = "All fields are required";
             return;
+            
         }
 
         const user = JSON.parse(localStorage.getItem("user") );
@@ -64,8 +64,8 @@
         }
 
         if (
-            user.email === email &&
-            user.password === password
+            user.email === logindata.email &&
+            user.password === logindata.password
         ) {
 
             user.isLoggedIn = true;
